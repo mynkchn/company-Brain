@@ -9,21 +9,6 @@ import NewPlaygroundPage from '@/pages/NewPlaygroundPage';
 import PlaygroundPage from '@/pages/PlaygroundPage';
 import TetrisLoading from '@/components/TetrisLoading';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <TetrisLoading size="md" speed="fast" loadingText="Initialising QueryMind..." />
-      </div>
-    );
-  }
-
-  if (!user) return <Navigate to="/" replace />;
-  return <>{children}</>;
-}
-
 function AppRoutes() {
   const { user, loading, logout } = useAuth();
 
@@ -35,42 +20,16 @@ function AppRoutes() {
     );
   }
 
+  const layout = (children: React.ReactNode) =>
+    user ? <AppLayout user={user} onLogout={logout}>{children}</AppLayout> : <Navigate to="/" replace />;
+
   return (
     <Routes>
       <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/auth" element={<AuthCallbackPage />} />
-
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <AppLayout user={user!} onLogout={logout}>
-              <DashboardPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/new"
-        element={
-          <ProtectedRoute>
-            <AppLayout user={user!} onLogout={logout}>
-              <NewPlaygroundPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/playground/:id"
-        element={
-          <ProtectedRoute>
-            <AppLayout user={user!} onLogout={logout}>
-              <PlaygroundPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-
+      <Route path="/dashboard" element={layout(<DashboardPage />)} />
+      <Route path="/new" element={layout(<NewPlaygroundPage />)} />
+      <Route path="/playground/:id" element={layout(<PlaygroundPage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
