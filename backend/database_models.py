@@ -7,7 +7,13 @@ import os
 load_dotenv()
 
 Base = declarative_base()
-engine = create_engine(os.getenv('DATABASE_URL'))
+engine = create_engine(
+    os.getenv('DATABASE_URL'),
+    pool_pre_ping=True,
+    pool_recycle=1800,
+    pool_size=5,
+    max_overflow=10,
+)
 SessionLocal = sessionmaker(bind=engine,autocommit=False,autoflush=False,expire_on_commit=False)
 
 class User(Base):
