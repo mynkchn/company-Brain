@@ -1,0 +1,85 @@
+# =========================
+# Python / FastAPI
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+.venv/
+venv/
+env/
+
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# SQLite
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.*
+
+# =========================
+# FastAPI uploads/temp
+# =========================
+uploads/
+tmp/
+temp/
+
+# =========================
+# Node / React / Vite
+# =========================
+node_modules/
+
+dist/
+build/
+
+.npm/
+.pnpm-store/
+
+# Vite
+.vite/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Cache
+# =========================
+.cache/
+
+# =========================
+# Secrets
+# =========================
+*.pem
+*.key
+secrets.json
+
+# =========================
+# LangChain / AI artifacts
+# =========================
+chroma_db/
+vectorstore/
+pinecone_cache/
