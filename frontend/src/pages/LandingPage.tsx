@@ -29,7 +29,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto w-full flex items-center gap-2">
           <Terminal className="h-5 w-5 text-primary" />
           <span className="font-mono font-bold text-sm">
-            query<span className="text-primary">mind</span>
+            company<span className="text-primary">Brain</span>
           </span>
         </div>
       </header>
@@ -99,12 +99,12 @@ export default function LandingPage() {
               <div className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
               <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
               <div className="h-2.5 w-2.5 rounded-full bg-primary/70" />
-              <span className="ml-2 text-xs font-mono text-muted-foreground">querymind — bash</span>
+              <span className="ml-2 text-xs font-mono text-muted-foreground">companyBrain — bash</span>
             </div>
             <div className="p-4 font-mono text-sm space-y-2">
               <div className="flex gap-2">
                 <span className="text-primary">$</span>
-                <span className="text-muted-foreground">querymind ask</span>
+                <span className="text-muted-foreground">companyBrain ask</span>
               </div>
               <div className="flex gap-2 ml-2">
                 <span className="text-muted-foreground/50">›</span>
