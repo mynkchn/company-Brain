@@ -24,8 +24,19 @@ def load_model():
 def load_database(db_url: str):
     return SQLDatabase.from_uri(db_url)
 
+def _escape_braces(text: str) -> str:
+    """Escape curly braces in user-supplied text so LangChain's
+    prefix.format(dialect=..., top_k=...) doesn't misinterpret them."""
+    return text.replace("{", "{{").replace("}", "}}")
+
+
 def create_agent(model, database, doc_context: str = "", user_context: str = ""):
+    # NOTE: LangChain calls `prefix.format(dialect=..., top_k=...)` internally,
+    # so the prefix must contain exactly those two placeholders and no other
+    # bare { } — otherwise Python raises "unexpected '{' in field name".
+    # Any dynamic content (doc_context, user_context) must have its braces escaped.
     prefix = """You are a data assistant with access to SQL database tools.
+You are working with a {dialect} database. Limit results to {top_k} rows unless asked otherwise.
 
 Rules:
 - Only run SELECT queries. Never INSERT, UPDATE, DELETE, DROP, or any write operation.
@@ -33,9 +44,9 @@ Rules:
 - If nothing is found, say: I could not find the requested information.
 """
     if user_context:
-        prefix += f"\nUser context about this database: {user_context}"
+        prefix += f"\nUser context about this database: {_escape_braces(user_context)}"
     if doc_context:
-        prefix += f"\nRelevant document context: {doc_context}"
+        prefix += f"\nRelevant document context: {_escape_braces(doc_context)}"
 
     return create_sql_agent(
         llm=model,
