@@ -15,7 +15,7 @@ function AppRoutes() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <TetrisLoading size="md" speed="fast" loadingText="Initialising QueryMind..." />
+        <TetrisLoading size="md" speed="fast" loadingText="Initialising CompanyBrain..." />
       </div>
     );
   }

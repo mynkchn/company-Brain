@@ -30,7 +30,7 @@ export default function AppLayout({ user, onLogout, children }: AppLayoutProps) 
               <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-primary rounded-full animate-pulse" />
             </div>
             <span className="font-mono font-bold text-sm text-foreground">
-              query<span className="text-primary">mind</span>
+              company<span className="text-primary">Brain</span>
             </span>
           </Link>
 

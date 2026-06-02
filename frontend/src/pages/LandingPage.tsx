@@ -67,7 +67,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
             className="text-muted-foreground text-lg max-w-xl mx-auto"
           >
-            QueryMind connects to your SQL database and lets you ask questions
+            CompanyBrain connects to your SQL database and lets you ask questions
             naturally. No SQL required — just ask.
           </motion.p>
 
