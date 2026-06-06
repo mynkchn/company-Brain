@@ -16,13 +16,12 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 
 INDEX_NAME = os.getenv("PINECONE_INDEX", "sql-agent")
 
-# Free local embedding model
+
 embedding_model = SentenceTransformer(
-    "sentence-transformers/all-MiniLM-L6-v2"
+    "sentence-transformers/all-mpnet-base-v2"
 )
 
-# This model gives 384 dimensions
-EMBEDDING_DIMENSION = 384
+EMBEDDING_DIMENSION = 768  
 
 
 def get_index():
@@ -43,14 +42,15 @@ def get_index():
 
 
 def embed_text(text):
-    text=str(text)
-    return embedding_model.encode(text).tolist()
+    text = str(text)
+    return embedding_model.encode(text, normalize_embeddings=True).tolist() 
 
 
 def upsert_documents(texts: list[str], namespace: str):
+   
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
+        chunk_size=1000,    
+        chunk_overlap=150  
     )
 
     chunks = splitter.create_documents(texts)
@@ -84,11 +84,7 @@ def upsert_documents(texts: list[str], namespace: str):
         )
 
 
-def retrieve_context(
-    query: str,
-    namespace: str,
-    top_k: int = 4
-):
+def retrieve_context(query: str,namespace: str,top_k: int = 6 ) -> str:
     index = get_index()
 
     vec = embed_text(query)
@@ -100,9 +96,18 @@ def retrieve_context(
         include_metadata=True
     )
 
+    MIN_SCORE = 0.30
+    relevant = [
+        match for match in result.matches
+        if match.score >= MIN_SCORE
+    ]
+
+    if not relevant:
+        return ""  
+
     return "\n\n".join(
         match.metadata.get("text", "")
-        for match in result.matches
+        for match in relevant
     )
 
 
