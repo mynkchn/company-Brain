@@ -31,38 +31,30 @@ def _escape_braces(text: str) -> str:
 
 
 def create_agent(model, database, doc_context: str = "", user_context: str = ""):
-    prefix = """You are an expert data analyst with access to a {dialect} database.
-You can query up to {top_k} rows by default, but ask for more if needed.
+    # NOTE: LangChain calls `prefix.format(dialect=..., top_k=...)` internally,
+    # so the prefix must contain exactly those two placeholders and no other
+    # bare { } — otherwise Python raises "unexpected '{' in field name".
+    # Any dynamic content (doc_context, user_context) must have its braces escaped.
+    prefix = """You are a data assistant with access to SQL database tools.
+You are working with a {dialect} database. Limit results to {top_k} rows unless asked otherwise.
 
-IMPORTANT RULES:
-- ALWAYS use the sql_db_list_tables tool first to discover available tables.
-- ALWAYS use sql_db_schema to understand table structure before querying.
+Rules:
 - Only run SELECT queries. Never INSERT, UPDATE, DELETE, DROP, or any write operation.
-- If a query returns no rows, try alternative column names or relaxed filters before giving up.
-- Use the document context below to understand business terminology, column meanings, and domain knowledge.
-- Be thorough: if one approach fails, try a different query strategy.
-- Provide clear, human-readable answers with the data found.
-- Only say you cannot find information after genuinely trying multiple query approaches.
+- Do not fabricate information. Only answer from tool results.
+- If nothing is found, say: I could not find the requested information.
 """
     if user_context:
-        prefix += f"\n=== DATABASE CONTEXT ===\n{_escape_braces(user_context)}\n"
+        prefix += f"\nUser context about this database: {_escape_braces(user_context)}"
     if doc_context:
-        prefix += f"\n=== RELEVANT DOCUMENT KNOWLEDGE ===\n{_escape_braces(doc_context)}\n"
-
-    prefix += "\nNow answer the user's question using the tools available to you."
-
-    provider = os.getenv("LLM_PROVIDER", "groq").lower()
-    agent_type = "openai-tools" if provider == "openai" else "tool-calling"
+        prefix += f"\nRelevant document context: {_escape_braces(doc_context)}"
 
     return create_sql_agent(
         llm=model,
         db=database,
-        agent_type=agent_type,
+        agent_type="openai-tools",
         prefix=prefix,
-        verbose=True,       
+        verbose=False,
         handle_parsing_errors=True,
-        max_iterations=15,  
-        max_execution_time=60,
     )
 
 def ask_question(agent, question: str):
