@@ -31,7 +31,6 @@ def _escape_braces(text: str) -> str:
 
 
 def create_agent(model, database, doc_context: str = "", user_context: str = ""):
-    # FIX 1: Much richer prefix that encourages exploration and using doc context
     prefix = """You are an expert data analyst with access to a {dialect} database.
 You can query up to {top_k} rows by default, but ask for more if needed.
 
@@ -52,9 +51,7 @@ IMPORTANT RULES:
 
     prefix += "\nNow answer the user's question using the tools available to you."
 
-    # FIX 2: Determine agent_type based on provider for compatibility
     provider = os.getenv("LLM_PROVIDER", "groq").lower()
-    # openai-tools works with OpenAI and compatible APIs; use "tool-calling" for others
     agent_type = "openai-tools" if provider == "openai" else "tool-calling"
 
     return create_sql_agent(
@@ -62,9 +59,9 @@ IMPORTANT RULES:
         db=database,
         agent_type=agent_type,
         prefix=prefix,
-        verbose=True,       # FIX 3: Enable verbose for better debugging
+        verbose=True,       
         handle_parsing_errors=True,
-        max_iterations=15,  # FIX 4: Increase from default 6 — complex queries need more steps
+        max_iterations=15,  
         max_execution_time=60,
     )
 
